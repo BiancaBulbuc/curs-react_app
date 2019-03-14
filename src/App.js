@@ -1,26 +1,39 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route } from 'react-router-dom';
+// e cu acolade pentru ca importam un obiect, fara acolade exportam un obiect default
+import MainMenu from './shared/MainMenu';
+import "bootstrap/dist/css/bootstrap.min.css";
+import {PostList, PostDetails, PostEdit} from "./views/posts";
+import UserContext from './shared/user.context';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      user: {}
+    };
+
+    this.handleUserChange = this.handleUserChange.bind(this);
+  }
+
+  handleUserChange(user) {
+    this.setState({ user });
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <BrowserRouter>
+        <UserContext.Provider value={ {user: this.state.user, onUserUpdated: this.handleUserChange} }>
+          <div>
+            <MainMenu site_name="my_first react app"></MainMenu>
+            <Route exact path = "/" component = { () => <h2>Home Page</h2>} />
+            <Route exact path ="/posts" component = {PostList} />
+            <Route exact path ="/posts/:id" component = {PostDetails} />
+            <Route path ="/posts/edit/:id" component = {PostEdit} />
+          </div>
+      </UserContext.Provider>
+     </BrowserRouter>
     );
   }
 }
